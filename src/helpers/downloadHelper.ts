@@ -1,4 +1,3 @@
-/* istanbul ignore file */
 import axios from 'axios';
 import { createWriteStream, mkdirSync } from 'fs';
 
@@ -32,7 +31,6 @@ export const downloadComicImage = async (
 		});
 
 		response.data.on('error', () => {
-			/* istanbul ignore next */
 			reject();
 		});
 	});
