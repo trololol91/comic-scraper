@@ -16,3 +16,9 @@ This project allows users to scrape and download comic books as images from down
 1. Supported Site 1
 
 ## Contributing
+
+### Directory Structure
+
+### Setup
+
+### Creating MR

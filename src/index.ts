@@ -1,13 +1,14 @@
 #!/usr/bin/env ts-node-script
+/* istanbul ignore file */
+
 import { ReadComicsOnlineService } from './services/ReadComicsOnlineService';
 import { IDownloaderService } from './services/base/IDownloaderService';
-import { DOWNLOAD_TYPE } from '~src/resources/enums';
 
 const getDownloadServiceOnSource = (source: string): IDownloaderService => {
 	switch (source.toLowerCase()) {
 		case 'getcomics':
 		case 'readcomicsonline':
-			return new ReadComicsOnlineService();
+			return new ReadComicsOnlineService('output');
 		default:
 			throw new Error(`Source ${source} is not supported`);
 	}
@@ -16,16 +17,16 @@ const getDownloadServiceOnSource = (source: string): IDownloaderService => {
 const downloadImages = (
 	source: string,
 	comicDlId: string,
-	dlType: DOWNLOAD_TYPE
+	issueNumber?: number
 ) => {
 	console.log(`Downloading ${comicDlId} in URL in ${source}`);
 	const dlService = getDownloadServiceOnSource(source);
 
-	if (dlType === DOWNLOAD_TYPE.COMIC) {
-		dlService.getComic(comicDlId);
+	if (issueNumber) {
+		dlService.getIssue(comicDlId, issueNumber);
 	} else {
 		dlService.getSeries(comicDlId);
 	}
 };
 
-downloadImages('getcomics', 'green lantern', DOWNLOAD_TYPE.COMIC);
+downloadImages('getcomics', 'hal-jordan-and-the-green-lantern-corps-2016', 1);

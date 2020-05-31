@@ -1,4 +1,4 @@
 export interface IDownloaderService {
-	getComic(volume: string): void;
-	getSeries(series: string): void;
+	getIssue(comic: string, issue: number): void;
+	getSeries(comic: string): void;
 }
