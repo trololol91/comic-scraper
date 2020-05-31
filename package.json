@@ -1,0 +1,21 @@
+{
+	"name": "comic-scraper",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "ts-node -r tsconfig-paths/register src/index.ts"
+	},
+	"author": "Richmond Lim",
+	"license": "ISC",
+	"dependencies": {
+		"@types/axios": "^0.14.0",
+		"@types/cheerio": "^0.22.18",
+		"axios": "^0.19.2",
+		"cheerio": "^1.0.0-rc.3",
+		"ts-node": "^8.10.2",
+		"tsconfig-paths": "^3.9.0",
+		"typescript": "^3.9.3"
+	}
+}
