@@ -27,7 +27,8 @@ describe('ReadComicsOnlineService', () => {
 					headers: {},
 					config: {}
 				};
-				if (url.charAt(url.length - 1).match(/[0-9]+/)) {
+				const urlPath = url.split('/');
+				if (urlPath[urlPath.length - 1].match(/^[0-9]+/)) {
 					returnVal.data = fs.readFileSync(
 						'src/services/__tests__/test_resource/readcominconline_getIssue',
 						{
@@ -35,7 +36,12 @@ describe('ReadComicsOnlineService', () => {
 						}
 					);
 				} else {
-					returnVal.data = '';
+					returnVal.data = fs.readFileSync(
+						'src/services/__tests__/test_resource/readcomicsonline_getSeries',
+						{
+							encoding: 'utf-8'
+						}
+					);
 				}
 
 				return new Promise((resolve) => {
@@ -45,12 +51,20 @@ describe('ReadComicsOnlineService', () => {
 		);
 	});
 
-	it('should download comics in given comic', async () => {
+	it('should download comic issue in given name and issue', async () => {
 		await readComicsOnlineService.getIssue(
 			'hal-jordan-and-the-green-lantern-corps-2016',
 			1
 		);
 		expect(readComicsOnlineService.axiosInstance.get).toBeCalledTimes(24);
 		expect(downloadHelper.downloadComicImage).toBeCalledTimes(23);
-	}, 300000);
+	});
+
+	it('should download series given series name', async () => {
+		await readComicsOnlineService.getSeries(
+			'hal-jordan-and-the-green-lantern-corps-2016'
+		);
+		expect(readComicsOnlineService.axiosInstance.get).toBeCalledTimes(1225);
+		expect(downloadHelper.downloadComicImage).toBeCalledTimes(23 * 51);
+	});
 });

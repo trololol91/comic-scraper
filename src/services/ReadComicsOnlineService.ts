@@ -13,15 +13,25 @@ export class ReadComicsOnlineService extends DownloaderService {
 		super(ReadComicsOnline, imageDirectory);
 	}
 
-	private getPages(cheerioData: CheerioStatic) {
+	private getPages(cheerioData: CheerioStatic): number {
 		return cheerioData('select#page-list')[0].children.filter((elem) => {
 			return elem.name === 'option';
 		}).length;
 	}
 
-	private async downloadImages(comic: string, issue: number, pages: number) {
+	private getNumOfIssues(cheerioData: CheerioStatic): number {
+		return cheerioData('ul.chapters').children().length;
+	}
+
+	private async downloadIssue(
+		comic: string,
+		issue: number,
+		pages: number
+	): Promise<void> {
 		for (let page = 1; page <= pages; page++) {
-			console.log(`Downloading ${comic} page ${page} of ${pages}`);
+			console.log(
+				`Downloading ${comic} issue ${issue} page ${page} of ${pages}`
+			);
 			// Get Comic
 			const response = await this.axiosInstance.get(
 				this.COMIC_ISSUE_PAGE_URL_FORMAT.replace('%COMIC_ID%', comic)
@@ -40,6 +50,20 @@ export class ReadComicsOnlineService extends DownloaderService {
 		}
 	}
 
+	private async downloadSeries(
+		comic: string,
+		numOfIssues: number
+	): Promise<void> {
+		for (let issue = 1; issue <= numOfIssues; issue++) {
+			await this.getIssue(comic, issue);
+		}
+	}
+
+	/**
+	 * Download a specific issue of a comic series
+	 * @param comic comic to download
+	 * @param issue download specific issue
+	 */
 	public async getIssue(comic: string, issue: number): Promise<void> {
 		// Get Comic
 		const response = await this.axiosInstance.get(
@@ -55,13 +79,25 @@ export class ReadComicsOnlineService extends DownloaderService {
 		const pages = this.getPages(cheerioData);
 
 		// Download Images
-		await this.downloadImages(comic, issue, pages);
+		await this.downloadIssue(comic, issue, pages);
 	}
 
+	/**
+	 * Get whole series
+	 * @param comic comic to download
+	 */
 	public async getSeries(comic: string): Promise<void> {
 		// Get Comic
 		const response = await this.axiosInstance.get(
 			this.COMIC_URL_FORMAT.replace('%COMIC_ID%', comic)
 		);
+
+		const cheerioData = cheerio.load(response.data);
+
+		// Get Number of Issues
+		const numOfIssues = this.getNumOfIssues(cheerioData);
+
+		// Download Series
+		await this.downloadSeries(comic, numOfIssues);
 	}
 }
