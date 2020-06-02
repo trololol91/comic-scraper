@@ -1,6 +1,7 @@
 import { DownloaderService } from './base/DownloaderService';
 import { ReadComicsOnline } from '~src/resources/sourceUrls';
 import { downloadComicImage } from '~src/helpers/downloadHelper';
+import { createCPZ } from '~src/helpers/archiveHelper';
 import cheerio from 'cheerio';
 
 export class ReadComicsOnlineService extends DownloaderService {
@@ -28,6 +29,9 @@ export class ReadComicsOnlineService extends DownloaderService {
 		issue: number,
 		pages: number
 	): Promise<void> {
+		const comicDirectory = `${this.imageDirectory}/${comic}`;
+		const outputDirectory = `${comicDirectory}/${issue}`;
+
 		for (let page = 1; page <= pages; page++) {
 			console.log(
 				`Downloading ${comic} issue ${issue} page ${page} of ${pages}`
@@ -43,10 +47,10 @@ export class ReadComicsOnlineService extends DownloaderService {
 			const cheerioData = cheerio.load(response.data);
 			const imageUrl = cheerioData('#ppp > a > img.img-responsive')[0].attribs
 				.src;
-
-			const outputDirectory = `${this.imageDirectory}/${comic}/${issue}`;
+			const filename = `${comic}-${issue}`;
 
 			await downloadComicImage(imageUrl, outputDirectory, page);
+			await createCPZ(outputDirectory, comicDirectory, filename);
 		}
 	}
 

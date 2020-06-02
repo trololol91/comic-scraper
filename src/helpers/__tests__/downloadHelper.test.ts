@@ -7,9 +7,12 @@ describe('Download Helper', () => {
 	const directory = 'testDirectory';
 	const page = 0;
 
-	beforeAll(() => {
+	beforeEach(() => {
 		jest.spyOn(fs, 'createWriteStream').mockImplementation(jest.fn());
 		jest.spyOn(fs, 'mkdirSync').mockImplementation(jest.fn());
+		jest.spyOn(fs, 'existsSync').mockImplementation((path) => {
+			return false;
+		});
 		jest.spyOn(axios, 'get').mockImplementation(
 			(
 				url: string,
@@ -37,16 +40,26 @@ describe('Download Helper', () => {
 		);
 	});
 
-	it('should download comic from url', () => {
+	it('should not create directory given directory already exists', () => {
+		jest.spyOn(fs, 'existsSync').mockImplementation((path) => {
+			return true;
+		});
+
 		downloadComicImage(url, directory, page);
 
-		expect(axios.get).toBeCalled();
+		expect(fs.mkdirSync).toBeCalledTimes(0);
 	});
 
 	it('should create directory given directory', () => {
 		downloadComicImage(url, directory, page);
 
-		expect(fs.mkdirSync).toBeCalledWith(directory, { recursive: true });
+		expect(fs.mkdirSync).toBeCalled();
+	});
+
+	it('should download comic from url', () => {
+		downloadComicImage(url, directory, page);
+
+		expect(axios.get).toBeCalled();
 	});
 
 	it('should createWriteStream from url', () => {

@@ -1,6 +1,7 @@
 import { ReadComicsOnlineService } from '~src/services/ReadComicsOnlineService';
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import * as downloadHelper from '~src/helpers/downloadHelper';
+import * as archiveHelper from '~src/helpers/archiveHelper';
 import fs from 'fs';
 
 describe('ReadComicsOnlineService', () => {
@@ -15,6 +16,15 @@ describe('ReadComicsOnlineService', () => {
 					resolve();
 				});
 			});
+		jest
+			.spyOn(archiveHelper, 'createCPZ')
+			.mockImplementation(
+				(srcDirectory: string, destDirectory: string, filename: string) => {
+					return new Promise((resolve) => {
+						resolve();
+					});
+				}
+			);
 		jest.spyOn(readComicsOnlineService.axiosInstance, 'get').mockImplementation(
 			(
 				url: string,

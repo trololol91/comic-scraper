@@ -1,18 +1,19 @@
 import axios from 'axios';
-import { createWriteStream, mkdirSync } from 'fs';
+import { createWriteStream, mkdirSync, existsSync } from 'fs';
 
 export const downloadComicImage = async (
 	url: string,
 	directory: string,
 	page: number
 ) => {
-	// console.log(`Downloading ${url} to ${directory}`);
+	// create directory if not available
+	if (!existsSync(directory)) {
+		mkdirSync(directory, { recursive: true });
+	}
+
 	const response = await axios.get(url, {
 		responseType: 'stream'
 	});
-
-	// create directory if not available
-	mkdirSync(`${directory}`, { recursive: true });
 
 	// get file extenstion
 	const urlPath = url.split('/');
