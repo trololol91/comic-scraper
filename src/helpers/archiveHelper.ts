@@ -37,8 +37,9 @@ export const createCPZ = async (
 
 	await archive.finalize();
 
-	await rimraf(srcDirectory, (error: Error) => {
-		/* istanbul ignore next */
-		throw error;
+	rimraf(srcDirectory, (error: Error) => {
+		if (error) {
+			throw error;
+		}
 	});
 };
