@@ -21,7 +21,7 @@ This project allows users to scrape and download comic books as images from down
   - comicDlId - the comic id, usually found in the url of the comic
   - issue number (optional) - providing this will only download one issue (not providing will download the whole series)
 - then run `npm start`
-- it should download the images into `output/<comic name>` folder
+- it should download the images and compress them to `output/<comic name>` folder
 
 ## Supported Sites
 
